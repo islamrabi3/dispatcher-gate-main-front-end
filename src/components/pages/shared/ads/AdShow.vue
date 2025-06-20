@@ -55,39 +55,45 @@ const offerSubmit = async (data: { price: string; notes: string }) => {
 </script>
 <template>
   <div class="pa-5">
-    <div class="d-flex align-center justify-space-between">
-      <div>
-        <h1 class="font-weight-bold text-capitalize">{{ res?.data.title }}</h1>
+    <v-card flat class="mb-6 pa-4 rounded-lg bg-grey-lighten-4">
+      <div class="d-flex align-center justify-space-between">
+        <div>
+          <h1 class="text-h4 font-weight-bold text-capitalize mb-2">{{ res?.data.title }}</h1>
 
-        <v-breadcrumbs class="pa-0" :items="breadCrumbs">
-          <template v-slot:divider>
-            <v-icon icon="mdi-chevron-right"></v-icon>
-          </template>
-        </v-breadcrumbs>
+          <v-breadcrumbs class="pa-0" :items="breadCrumbs">
+            <template v-slot:divider>
+              <v-icon icon="mdi-chevron-right"></v-icon>
+            </template>
+          </v-breadcrumbs>
+        </div>
+
+        <div class="d-flex gap-3">
+          <v-btn
+            v-if="role === 'shipper'"
+            prepend-icon="mdi-pencil"
+            rounded="pill"
+            color="secondary"
+            variant="elevated"
+            class="text-capitalize font-weight-medium"
+            @click="dialog = true"
+          >
+            Edit Ad
+          </v-btn>
+
+          <v-btn
+            v-if="role === 'carrier'"
+            prepend-icon="mdi-offer"
+            rounded="pill"
+            color="secondary"
+            variant="elevated"
+            class="text-capitalize font-weight-medium"
+            @click="offerDialog = true"
+          >
+            Send Offer
+          </v-btn>
+        </div>
       </div>
-
-      <v-btn
-        v-if="role === 'shipper'"
-        flat
-        prepend-icon="mdi-pencil"
-        rounded="xl"
-        color="secondary"
-        @click="dialog = true"
-      >
-        edit ad
-      </v-btn>
-
-      <v-btn
-        v-if="role === 'carrier'"
-        flat
-        prepend-icon="mdi-offer"
-        rounded="xl"
-        color="secondary"
-        @click="offerDialog = true"
-      >
-        send offer
-      </v-btn>
-    </div>
+    </v-card>
 
     <common-common-dialog
       :title="'send offer'"
@@ -132,51 +138,115 @@ const offerSubmit = async (data: { price: string; notes: string }) => {
         <ad-form :values="res!.data" @submit="handleSubmit($event)" />
       </template>
     </common-common-dialog>
-    <v-row>
+    <v-row class="mt-2">
       <v-col cols="7">
-        <v-card flat rounded="lg" class="my-5" style="height: 98%">
-          <v-card-title class="font-weight-bold bg-primary text-capitalize">
-            shipment route
+        <v-card rounded="lg" class="mb-5" elevation="2">
+          <v-card-title class="font-weight-bold bg-primary text-capitalize py-4 px-6">
+            <v-icon icon="mdi-map-marker-path" class="mr-2"></v-icon>
+            Shipment Route
           </v-card-title>
-          <div class="pa-5 h-100">
-            <GMapMap
-              :center="{ lat: 51.093048, lng: 6.84212 }"
-              :zoom="7"
-              class="h-100"
-              style="height: 100%"
-            />
+          <div class="pa-6 h-100">
+            <v-card elevation="0" class="h-100 d-flex flex-column justify-center align-center bg-grey-lighten-5 rounded-lg pa-6">
+              <div class="text-center mb-5 pa-3 rounded-lg bg-white elevation-1 w-100">
+                <v-icon icon="mdi-map-marker" color="primary" size="large" class="mb-2"></v-icon>
+                <h3 class="text-h6 font-weight-bold mb-3">Pickup Address</h3>
+                <p class="text-body-1">{{ res?.data.pickupAddress }}</p>
+              </div>
+              <v-divider class="my-4 w-75"></v-divider>
+              <div class="text-center mt-3 pa-3 rounded-lg bg-white elevation-1 w-100">
+                <v-icon icon="mdi-map-marker-check" color="success" size="large" class="mb-2"></v-icon>
+                <h3 class="text-h6 font-weight-bold mb-3">Delivery Address</h3>
+                <p class="text-body-1">{{ res?.data.deliveryAddress }}</p>
+              </div>
+            </v-card>
           </div>
         </v-card>
       </v-col>
       <v-col cols="5">
-        <v-card flat rounded="lg" class="my-5">
-          <v-card-title class="font-weight-bold bg-primary text-capitalize">
-            shipment image
+        <v-card rounded="lg" class="mb-5" elevation="2">
+          <v-card-title class="font-weight-bold bg-primary text-capitalize py-4 px-6">
+            <v-icon icon="mdi-image" class="mr-2"></v-icon>
+            Shipment Image
           </v-card-title>
-          <div class="pa-5">
-            <v-img :src="setImageUrl(res!.data.image_url)" class="w-100" height="300"></v-img>
+          <div class="pa-6">
+            <v-img 
+              :src="setImageUrl(res!.data.image_url)" 
+              class="w-100 rounded-lg" 
+              height="300"
+              cover
+            >
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
           </div>
         </v-card>
-        <common-common-show-form
-          :title="'Shipment Listing Information'"
-          :data="
-            Object.fromEntries(
-              Object.entries(res!.data).filter(
-                ([key]) =>
-                  !key.includes('image_url') &&
-                  !key.includes('id') &&
-                  !key.includes('shipperId') &&
-                  !key.includes('isOrderPlaced') &&
-                  !key.includes('title') &&
-                  !key.includes('shipper')
-              )
-            )
-          "
-        >
-        </common-common-show-form>
+        <v-card rounded="lg" elevation="2" class="mb-5">
+          <v-card-title class="font-weight-bold bg-primary text-capitalize py-4 px-6">
+            <v-icon icon="mdi-information-outline" class="mr-2"></v-icon>
+            Shipment Listing Information
+          </v-card-title>
+          <v-card-text class="pa-0">
+            <common-common-show-form
+              :title="''"
+              :data="
+                Object.fromEntries(
+                  Object.entries(res!.data).filter(
+                    ([key]) =>
+                      typeof key === 'string' &&
+                      !key.includes('image_url') &&
+                      !key.includes('id') &&
+                      !key.includes('shipperId') &&
+                      !key.includes('isOrderPlaced') &&
+                      !key.includes('title') &&
+                      !key.includes('shipper')
+                  )
+                )
+              "
+            >
+            </common-common-show-form>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.v-card {
+  transition: all 0.3s ease;
+}
+
+.v-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.bg-primary {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.v-card-title {
+  letter-spacing: 0.5px;
+}
+
+.text-h4 {
+  letter-spacing: 0.5px;
+}
+
+.route-address-container {
+  position: relative;
+}
+
+.route-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--v-primary-base);
+  z-index: 0;
+}
+</style>

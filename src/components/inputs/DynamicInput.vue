@@ -140,13 +140,17 @@ const commonProps: VuetifyInput = {
       active-color="primary"
     />
     <div v-if="type === 'map'">
-      <GMapAutocomplete
-        :placeholder="`${props.label}*`"
-        @place_changed="handleChange($event.address_components[0].long_name)"
-        class="w-100 h-100 map-autocomplete"
+      <v-text-field
+        v-bind="commonProps"
+        :model-value="field.value"
+        :error-messages="errors"
+        class="rounded-xl"
+        @update:model-value="handleChange($event), $emit('get:modelValue', $event)"
       >
-      </GMapAutocomplete>
-      <p class="text-red text-caption">{{ errors[0] }}</p>
+        <template #label>
+          <inputs-is-required :label="label" :rules="rules" />
+        </template>
+      </v-text-field>
     </div>
   </Field>
 </template>

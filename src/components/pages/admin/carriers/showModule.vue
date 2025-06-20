@@ -70,6 +70,7 @@ const res = await getCarrier(route.params.id)
             Object.fromEntries(
               Object.entries(res?.data).filter(
                 ([key]) =>
+                  typeof key === 'string' &&
                   !key.includes('image_url') &&
                   !key.includes('id') &&
                   !key.includes('isBlocked') &&

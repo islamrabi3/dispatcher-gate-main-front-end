@@ -75,6 +75,7 @@ await profileStore.getProfileData()
             Object.fromEntries(
               Object.entries(profileStore.profileData?.data).filter(
                 ([key]) =>
+                  typeof key === 'string' &&
                   !key.includes('image_url') &&
                   !key.includes('id') &&
                   !key.includes('isBlocked') &&

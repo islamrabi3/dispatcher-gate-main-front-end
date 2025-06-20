@@ -18,6 +18,7 @@ const res = await getShipperOrder(route.params.id)
         Object.fromEntries(
           Object.entries(res!.data).filter(
             ([key]) =>
+              typeof key === 'string' &&
               !key.includes('id') &&
               !key.includes('image_url') &&
               !key.includes('carrierId') &&

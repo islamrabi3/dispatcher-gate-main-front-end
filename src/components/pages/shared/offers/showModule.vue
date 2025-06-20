@@ -59,6 +59,7 @@ const accepting = ref(false)
         Object.fromEntries(
           Object.entries(res!.data).filter(
             ([key]) =>
+              typeof key === 'string' &&
               !key.includes('id') &&
               !key.includes('shipperId') &&
               !key.includes('isOrderPlaced') &&
