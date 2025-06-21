@@ -68,6 +68,7 @@ const offerSubmit = async (data: { price: string; notes: string }) => {
         </div>
 
         <div class="d-flex gap-3">
+          <!-- Temporarily commented out Edit Ad button
           <v-btn
             v-if="role === 'shipper'"
             prepend-icon="mdi-pencil"
@@ -79,6 +80,7 @@ const offerSubmit = async (data: { price: string; notes: string }) => {
           >
             Edit Ad
           </v-btn>
+          -->
 
           <v-btn
             v-if="role === 'carrier'"
